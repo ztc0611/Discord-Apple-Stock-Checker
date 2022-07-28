@@ -19,6 +19,7 @@ def check_stock(url, c):
         response = urllib.request.urlopen(url) #Get json from URL
         data = response.read()
         values = json.loads(data) #Convert
+        #print(json.dumps(values, indent=2))
 
         in_stock = []
 
@@ -26,16 +27,17 @@ def check_stock(url, c):
             message = "["+i["storeNumber"]+"] Checking "+i["storeName"]+", "+i["city"]+", "+i["state"]
             #print(i['storeName']+", "+i['city']+", "+i["state"])
             for j in i["partsAvailability"]:
-                name = i["partsAvailability"][j]["storePickupProductTitle"]
+                #print(i["partsAvailability"][j])
+                name = i["partsAvailability"][j]["messageTypes"]["regular"]["storePickupProductTitle"]
                 if i["partsAvailability"][j]["pickupDisplay"] == "available":
                     in_stock.append({"name":name, "city":i['city'], "store_name":i['storeName'], "storeNumber":i["storeNumber"],"pickupDisplay":i["partsAvailability"][j]["pickupDisplay"], "state":i["state"]})
                     #print(i['storeName'], ",", i['city'])
                     #print("!!!!! ",name,":",i["partsAvailability"][j]["pickupDisplay"],"\n")
         return [in_stock,message]
     except Exception as e: 
-        #print(e)
+        print(e)
         time.sleep(10)
-        #print("Retrying...")
+        print("Retrying...")
         return check_stock(url, c)
 
 ####DISCORD BOT
